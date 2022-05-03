@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Update() {
-        
+        player.move();
     }
 
     void FixedUpdate() {
@@ -31,36 +31,35 @@ public class PlayerManager : MonoBehaviour
 
         public GameObject player_obj;
         public Rigidbody2D player_rb;
-        public GameObject hook_obj;
+
+        public Hook hook;
+        public Vector2 prev_rope_point; 
+
         public Information info;
-        
+        int current_rope_length = 0;
+        float last_seg_dist;
 
         public Player(Information info){
             this.player_obj = Instantiate(info.player_prefab, info.start_pt, Quaternion.identity);
             this.player_rb = this.player_obj.GetComponent(typeof(Rigidbody2D)) as Rigidbody2D;
             this.info = info;
+            curr_pt = info.start_pt;
 
             shoot_hook(Vector2.up);
-
-            // add_force(new Vector2(0.04f, 0.03f));
         }
 
         public void shoot_hook(Vector2 direction){
-            int mask = LayerMask.GetMask("Collision");
-            RaycastHit2D hit = Physics2D.Raycast(curr_pt, direction, 20, mask);
-            if (hit.collider != null){
-                print(hit.point);
-                hook_obj = Instantiate(info.hook_prefab, hit.point, Quaternion.identity);
-                float new_rope_dist = info.rope_dist;
-                float hit_dist = (hit.point - curr_pt).magnitude;
-                int i = 0;
-                while (new_rope_dist < hit_dist) {
-                    info.rope_joints_trans[i].localPosition = curr_pt + (new_rope_dist * direction);
-                    info.rope_joints_obj[i].SetActive(true);
-                    new_rope_dist += info.rope_dist;
-                    i += 1;
-                }
+            hook = new Hook(curr_pt, direction, info);
+        }
+
+        public void rope_creation(Vector2 new_hook_loc, Vector2 prev_rope_loc){
+            if ((new_hook_loc - prev_rope_loc).magnitude > info.rope_dist) {
+                
             }
+        }
+
+        public void remove_rope() {
+
         }
 
         public void add_force(Vector2 force) {
@@ -73,6 +72,43 @@ public class PlayerManager : MonoBehaviour
             curr_pt += diff;
             curr_pt += info.gravity;
             player_rb.MovePosition(curr_pt);
+
+            hook.move();
+            prev_rope_point = rope_creation(curr_pt, prev_rope_point)
+        }
+
+        public class Hook {
+            Vector2 curr_pt;
+            Vector2 prev_pt;
+            float speed = 0.1f;
+            GameObject hook_obj;
+            Rigidbody2D hook_rb;
+            Information info;
+            bool made_contact = false;
+
+            public Hook(Vector2 start_pt, Vector2 direction, Information info) {
+                this.info = info;
+                hook_obj = Instantiate(info.hook_prefab, start_pt, Quaternion.identity);
+                hook_rb = hook_obj.GetComponent(typeof(Rigidbody2D)) as Rigidbody2D;
+                curr_pt = start_pt;
+                prev_pt = start_pt - (direction * speed);
+            }
+
+            public void move(){
+                if (!made_contact) {
+                    Vector2 diff = curr_pt - prev_pt;
+                    prev_pt = curr_pt;
+                    curr_pt += diff;
+                    int mask = LayerMask.GetMask("Collision");
+                    RaycastHit2D hit = Physics2D.Raycast(prev_pt, diff, diff.magnitude, mask);
+                    if (hit.collider != null){
+                        curr_pt = hit.point;
+                        made_contact = true;
+                    }
+                    // curr_pt += info.gravity;
+                    hook_rb.MovePosition(curr_pt);
+                }
+            }
         }
     }
 
@@ -83,6 +119,7 @@ public class PlayerManager : MonoBehaviour
         public GameObject hook_prefab;
         public Vector2 gravity = new Vector2(0, -0.001f);
         public float rope_dist;
+
         public List<Transform> rope_joints_trans = new List<Transform>();
         public List<Rigidbody2D> rope_joints_rb = new List<Rigidbody2D>();
         public List<GameObject> rope_joints_obj = new List<GameObject>();
@@ -92,6 +129,9 @@ public class PlayerManager : MonoBehaviour
             this.player_prefab = pp;
             this.rope_prefab = rp;
             this.hook_prefab = hp;
+            rope_dist = 0.2f;
+
+            create_rope_joints(100);
         }
 
         public void create_rope_joints(int num_to_make){
