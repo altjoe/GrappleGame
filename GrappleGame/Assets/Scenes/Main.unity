@@ -140,8 +140,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!61 &1734390
-BoxCollider2D:
+--- !u!68 &1734390
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -154,18 +154,18 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 6, y: 3}
   m_EdgeRadius: 0
+  m_Points:
+  - {x: -1.4204192, y: 1.6026784}
+  - {x: -1.4186616, y: 1.3275528}
+  - {x: -1.4008671, y: -1.4577764}
+  - {x: 1.2151606, y: -1.3648617}
+  - {x: 1.1827216, y: 1.5622709}
+  - {x: -1.4481585, y: 1.6044652}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
 --- !u!4 &1734391
 Transform:
   m_ObjectHideFlags: 0
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 472276d112c83414ab63b531497657ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player_prefab: {fileID: 6346896654011029745, guid: 1fe1d66f49ed444e5b3d526a055e24c1, type: 3}
+  ball_prefab: {fileID: 6346896654011029745, guid: 1fe1d66f49ed444e5b3d526a055e24c1, type: 3}
   rope_prefab: {fileID: 1354992349189993594, guid: e2f36439ac59941ad9039e11e673b69b, type: 3}
   hook_prefab: {fileID: 3331109571183659490, guid: 55beebcdf464e4b9ea64a8c88f5d9b8a, type: 3}
 --- !u!4 &1546961832
